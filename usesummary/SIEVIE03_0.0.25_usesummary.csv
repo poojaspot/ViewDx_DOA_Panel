@@ -1,0 +1,238 @@
+16:04:38,Test for 7 was initiated
+16:04:40,Starting camera capture...
+16:04:44,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_04.jpg
+16:04:45,Image Captured.
+16:04:45,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:04:45,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:04:45,Failed to extract test strips from cassette
+16:04:45,Result for 7 added in database.
+16:04:45,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_04', 'name': '', 'age': '', 'gender': ''}"
+16:04:45,Patient data report was not generated because no patientid
+16:05:44,Test done for sampleid 7
+16:05:44,Test result was overwritten.
+16:05:44,Starting camera capture...
+16:05:47,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_05.jpg
+16:05:47,Image Captured.
+16:05:47,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:05:47,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:05:47,Failed to extract test strips from cassette
+16:05:47,Result for 7 added in database.
+16:05:47,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_05', 'name': '', 'age': '', 'gender': ''}"
+16:05:47,Patient data report was not generated because no patientid
+16:05:51,Test done for sampleid 7
+16:05:51,Test result was overwritten.
+16:05:51,Starting camera capture...
+16:05:54,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_05.jpg
+16:05:55,Image Captured.
+16:05:55,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:05:55,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:05:55,Failed to extract test strips from cassette
+16:05:55,Result for 7 added in database.
+16:05:55,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_05', 'name': '', 'age': '', 'gender': ''}"
+16:05:55,Patient data report was not generated because no patientid
+16:14:46,Test done for sampleid 7
+16:14:46,Test result was overwritten.
+16:14:46,Starting camera capture...
+16:14:48,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_14.jpg
+16:14:49,Image Captured.
+16:14:49,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:14:49,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:14:49,Failed to extract test strips from cassette
+16:14:49,Result for 7 added in database.
+16:14:49,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_14', 'name': '', 'age': '', 'gender': ''}"
+16:14:49,Patient data report was not generated because no patientid
+16:15:15,Test done for sampleid 7
+16:15:15,Test result was overwritten.
+16:15:15,Starting camera capture...
+16:15:18,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_15.jpg
+16:15:18,Image Captured.
+16:15:18,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:15:18,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:15:18,Failed to extract test strips from cassette
+16:15:19,Result for 7 added in database.
+16:15:19,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_15', 'name': '', 'age': '', 'gender': ''}"
+16:15:19,Patient data report was not generated because no patientid
+16:15:24,Test done for sampleid 7
+16:15:24,Test result was overwritten.
+16:15:24,Starting camera capture...
+16:15:26,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_15.jpg
+16:15:27,Image Captured.
+16:15:27,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:15:27,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:15:27,Failed to extract test strips from cassette
+16:15:27,Result for 7 added in database.
+16:15:27,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_15', 'name': '', 'age': '', 'gender': ''}"
+16:15:27,Patient data report was not generated because no patientid
+16:15:32,Test done for sampleid 7
+16:15:32,Test result was overwritten.
+16:15:32,Starting camera capture...
+16:15:34,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_15.jpg
+16:15:35,Image Captured.
+16:15:35,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:15:35,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:15:35,Failed to extract test strips from cassette
+16:15:35,Result for 7 added in database.
+16:15:35,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_15', 'name': '', 'age': '', 'gender': ''}"
+16:15:35,Patient data report was not generated because no patientid
+16:16:21,Test done for sampleid 7
+16:16:21,Starting camera capture...
+16:16:23,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_16.jpg
+16:16:24,Image Captured.
+16:16:24,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:16:24,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:16:24,Failed to extract test strips from cassette
+16:16:24,Result for 7 added in database.
+16:16:24,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_16', 'name': '', 'age': '', 'gender': ''}"
+16:16:24,Patient data report was not generated because no patientid
+16:16:40,Test done for sampleid 7
+16:16:40,Test result was overwritten.
+16:16:40,Starting camera capture...
+16:16:42,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_16.jpg
+16:16:43,Image Captured.
+16:16:43,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:16:43,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:16:43,Failed to extract test strips from cassette
+16:16:43,Result for 7 added in database.
+16:16:43,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_16', 'name': '', 'age': '', 'gender': ''}"
+16:16:43,Patient data report was not generated because no patientid
+16:16:49,Test done for sampleid 7
+16:16:49,Test result was overwritten.
+16:16:49,Starting camera capture...
+16:16:52,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_16.jpg
+16:16:52,Image Captured.
+16:16:52,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:16:52,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:16:52,Failed to extract test strips from cassette
+16:16:52,Result for 7 added in database.
+16:16:52,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_16', 'name': '', 'age': '', 'gender': ''}"
+16:16:53,Patient data report was not generated because no patientid
+16:18:55,Test done for sampleid 7
+16:18:55,Test result was overwritten.
+16:18:55,Starting camera capture...
+16:18:57,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_7_01_12_2025_16_18.jpg
+16:18:58,Image Captured.
+16:18:58,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:18:58,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:18:58,Failed to extract test strips from cassette
+16:18:58,Result for 7 added in database.
+16:18:58,"Result is {'sampleid': '7', 'analyte': 'DADP12-01P2', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_18', 'name': '', 'age': '', 'gender': ''}"
+16:18:58,Patient data report was not generated because no patientid
+16:20:32,Test done for sampleid 7
+16:20:32,Test result was overwritten.
+16:20:32,Starting camera capture...
+16:20:35,Image save16:27:04,Test for 222 was initiated
+16:27:06,Starting camera capture...
+16:27:11,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_222_01_12_2025_16_27.jpg
+16:27:12,Image Captured.
+16:27:12,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:27:12,Expected 6 test windows but found 1. Re-insert test card properly and try again.
+16:27:13,Expected 6 test windows but found 1. Re-insert test card properly and try again.
+16:27:14,Error occurred while reading the test.
+16:27:14,Failed to extract test strips from cassette
+16:27:14,Result for 222 added in database.
+16:27:14,"Result is {'sampleid': '222', 'analyte': 'DADP12-01-FRONT', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_27', 'name': '', 'age': '', 'gender': ''}"
+16:27:14,Patient data report was not generated because no patientid
+16:27:17,Test done for sampleid 222
+16:27:17,Test result was overwritten.
+16:27:17,Starting camera capture...
+16:27:19,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_222_01_12_2025_16_27.jpg
+16:27:20,Image Captured.
+16:27:20,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:27:20,Expected 6 test windows but found 1. Re-insert test card properly and try again.
+16:27:21,Expected 6 test windows but found 1. Re-insert test card properly and try again.
+16:27:22,Error occurred while reading the test.
+16:27:22,Failed to extract test strips from cassette
+16:27:22,Result for 222 added in database.
+16:27:22,"Result is {'sampleid': '222', 'analyte': 'DADP12-01-FRONT', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_27', 'name': '', 'age': '', 'gender': ''}"
+16:27:22,Patient data report was not generated because no patientid
+16:32:46,Test for U was initiated
+16:32:49,Starting camera capture...
+16:32:53,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_U_01_12_2025_16_32.jpg
+16:32:54,Image Captured.
+16:32:54,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:32:54,Expected 5 test windows but found 0. Re-insert test card properly and try again.
+16:35:47,Test for 67 was initiated
+16:35:50,Starting camera capture...
+16:35:54,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_67_01_12_2025_16_35.jpg
+16:35:55,Image Captured.
+16:35:55,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:35:55,rgb2cmk: Converted RGB image to CMY color space
+16:35:55,67 doesn't have high background.
+16:35:55,"scan_card processed 142 lines, width 77"
+16:35:55,Detected prominences: [161.8746289  123.69808024]
+16:35:56,"Qualitative result for [dipma5-01] is [Negative for OPI(2000), Positive for AMP(500)]"
+16:35:56,rgb2cmk: Converted RGB image to CMY color space
+16:35:56,67 doesn't have high background.
+16:35:56,"scan_card processed 143 lines, width 78"
+16:35:56,Detected prominences: [  5.14417889 199.0569986  143.8839808 ]
+16:35:56,Qualitative result for [dipma5-01] is [Negative for THC(50) and COC(300)]
+16:35:56,rgb2cmk: Converted RGB image to CMY color space
+16:35:56,67 doesn't have high background.
+16:35:56,"scan_card processed 140 lines, width 77"
+16:35:56,Detected prominences: [188.44206092 149.80321351]
+16:35:56,"Qualitative result for [dipma5-01] is [Negative for BZO(300), Positive for BAR(300)]"
+16:35:56,rgb2cmk: Converted RGB image to CMY color space
+16:35:56,67 doesn't have high background.
+16:35:56,"scan_card processed 137 lines, width 79"
+16:35:56,Detected prominences: [103.11908186 144.29581542]
+16:35:57,"Qualitative result for [dipma5-01] is [Negative for MET(500), Positive for PCP(25)]"
+16:35:57,rgb2cmk: Converted RGB image to CMY color space
+16:35:57,67 doesn't have high background.
+16:35:57,"scan_card processed 135 lines, width 58"
+16:35:57,Detected prominences: [256.16988167 189.75094652]
+16:35:57,"Qualitative result for [dipma5-01] is [Negative for TCA(1000), Positive for MTD(300)]"
+16:35:57,"DOA result for [67] is [{'OPI(2000)': '-Ve', 'AMP(500)': '-Ve', 'THC(50)': '-Ve', 'COC(300)': '-Ve', 'BZO(300)': '-Ve', 'BAR(300)': '-Ve', 'MET(500)': '-Ve', 'PCP(25)': '-Ve', 'TCA(1000)': '-Ve', 'MTD(300)': '-Ve'}]"
+16:35:57,Result for 67 added in database.
+16:35:57,"Result is {'sampleid': '67', 'analyte': 'DIPMA5-01', 'cal_id': '1/1/1/1', 'result': {'OPI(2000)': '-Ve', 'AMP(500)': '-Ve', 'THC(50)': '-Ve', 'COC(300)': '-Ve', 'BZO(300)': '-Ve', 'BAR(300)': '-Ve', 'MET(500)': '-Ve', 'PCP(25)': '-Ve', 'TCA(1000)': '-Ve', 'MTD(300)': '-Ve'}, 'unit': '', 'date': '01_12_2025_16_35', 'name': '', 'age': '', 'gender': ''}"
+16:35:57,Patient data report was not generated because no patientid
+16:36:03,Test done for sampleid 67
+16:36:03,Test result was overwritten.
+16:36:03,Starting camera capture...
+16:36:06,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_67_01_12_2025_16_36.jpg
+16:36:06,Image Captured.
+16:36:06,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:36:06,Expected 5 test windows but found 2. Re-insert test card properly and try again.
+16:42:10,Test for 23 was initiated
+16:42:13,Starting camera capture...
+16:42:17,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_23_01_12_2025_16_42.jpg
+16:42:18,Image Captured.
+16:42:18,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:42:18,Expected 6 test windows but found 4. Re-insert test card properly and try again.
+16:42:19,Expected 6 test windows but found 4. Re-insert test card properly and try again.
+16:42:20,Error occurred while reading the test.
+16:42:20,Failed to extract test strips from cassette
+16:42:20,Result for 23 added in database.
+16:42:20,"Result is {'sampleid': '23', 'analyte': 'DADP12-01-FRONT', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_42', 'name': '', 'age': '', 'gender': ''}"
+16:42:20,Patient data report was not generated because no patientid
+16:42:23,Test done for sampleid 23
+16:42:23,Test result was overwritten.
+16:42:23,Starting camera capture...
+16:42:26,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_23_01_12_2025_16_42.jpg
+16:42:26,Image Captured.
+16:42:26,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:42:26,Expected 6 test windows but found 5. Re-insert test card properly and try again.
+16:42:53,Expected 6 test windows but found 5. Re-insert test card properly and try again.
+16:42:53,Error occurred while reading the test.
+16:42:53,Failed to extract test strips from cassette
+16:42:53,Result for 23 added in database.
+16:42:53,"Result is {'sampleid': '23', 'analyte': 'DADP12-01-FRONT', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_42', 'name': '', 'age': '', 'gender': ''}"
+16:42:53,Patient data report was not generated because no patientid
+16:42:58,Test done for sampleid 23
+16:42:58,Test result was overwritten.
+16:42:58,Starting camera capture...
+16:43:01,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_23_01_12_2025_16_42.jpg
+16:43:01,Image Captured.
+16:43:01,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:43:01,Expected 6 test windows but found 5. Re-insert test card properly and try again.
+16:43:13,Expected 6 test windows but found 5. Re-insert test card properly and try again.
+16:43:14,Error occurred while reading the test.
+16:43:14,Failed to extract test strips from cassette
+16:43:14,Result for 23 added in database.
+16:43:14,"Result is {'sampleid': '23', 'analyte': 'DADP12-01-FRONT', 'cal_id': '1/1/1/1', 'result': '', 'unit': '', 'date': '01_12_2025_16_42', 'name': '', 'age': '', 'gender': ''}"
+16:43:14,Patient data report was not generated because no patientid
+16:53:41,Test for 123 was initiated
+16:53:42,Starting camera capture...
+16:53:47,Image saved to: /home/pi/viewdx/captured/capturedimage_pil_123_01_12_2025_16_53.jpg
+16:53:48,Image Captured.
+16:53:48,ROI successfully saved: /home/pi/viewdx/captured/test_cassette.jpg
+16:53:48,Expected 5 test windows but found 4. Re-insert test card properly and try again.

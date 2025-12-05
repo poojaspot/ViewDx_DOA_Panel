@@ -1,0 +1,10 @@
+{
+  "endpoint": "https://your-server.com/api/results",
+  "auth_type": "basic",
+  "username": "your_username",
+  "password": "your_password",
+  "sync_mode": "both",
+  "headers": {
+    "Content-Type": "application/json"
+  }
+}
