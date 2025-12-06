@@ -280,7 +280,7 @@ def process_doa_image(total_tests,image, sampleid, date):
             results.usesummary(f"Warning: Failed to save cassette image: {str(save_err)}")
         x,y,_ = cassette_image.shape
         bottom_height = 650
-        test_window = cassette_image[x-bottom_height:x-20,70:-60] #hinged from the bottom for consistent cropping
+        test_window = cassette_image[x-bottom_height:x,50:-30] #hinged from the bottom for consistent cropping changed from x-20,70:-60
         c_gray = cv2.cvtColor(test_window, cv2.COLOR_BGR2GRAY)
         c_blurred = cv2.GaussianBlur(c_gray, (7, 7), 0)
         sobelx = cv2.Sobel(c_blurred,cv2.CV_64F,1,0,ksize=5)
@@ -319,7 +319,7 @@ def process_doa_image(total_tests,image, sampleid, date):
         save_path = os.path.join(save_dir, f'{sampleid}_{date}_rect.jpg')
         cv2.imwrite(save_path, image_rect)
         if len(test_rects) != total_tests: 
-            err_msg = f"Expected {total_tests} test windows but found {len(test_rects)}. Re-insert test card properly and try again."
+            err_msg = f"Expected {total_tests} test windows but found {len(test_rects)}. Re-insert test card at center and try again."
             results.usesummary(err_msg)
             widgets.error(err_msg)
         else:
