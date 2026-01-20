@@ -23,7 +23,6 @@ import utils
 import traceback
 import paneltestutils
 
-
 def camcapture(sampleid, date, gpio_pin_board):
     # Mapping from BOARD to BCM numbering for the specified pins
     BOARD_TO_BCM = {40: 21, 29: 5}
@@ -34,7 +33,6 @@ def camcapture(sampleid, date, gpio_pin_board):
     image_folder = 'captured'
     
     # Initialize hardware objects
-    picam2 = Picamera2()
     light = LED(bcm_pin)
 
     # Construct the image path
@@ -42,45 +40,150 @@ def camcapture(sampleid, date, gpio_pin_board):
     os.makedirs(image_path, exist_ok=True)
     image_filename = f'capturedimage_pil_{sampleid}_{date}.jpg'
     full_path = os.path.join(image_path, image_filename)
-
-    try:
-        results.usesummary("Starting camera capture...")
-        light.on() #Turn on LED and
-        
-        # Configure the camera for a still capture
-        config = picam2.create_preview_configuration(main={"size":(3280,2464)},lores={"size":(3280,2464)})
-        picam2.configure(config)      
-        picam2.start_preview(Preview.QT)
-        picam2.start()
-        time.sleep(2)
-        picam2.capture_file(full_path)
-        
-        results.usesummary(f"Image saved to: {full_path}")
-
-    except Exception as e:
-        traceback.print_exc()
-        results.usesummary(f"Error during camera operation: {e}")  
-
-    finally:
-        if picam2.started:
-            picam2.stop()
-        picam2.close()
-        light.close()
-
-    image_pil = Image.open(full_path)
-    image_rs = image_pil.resize((800,480),Image.Resampling.LANCZOS)
-    numpy_img = np.array(image_rs)
-    image_cv2 = cv2.cvtColor(numpy_img,cv2.COLOR_RGB2BGR)
-    image_filename = f'capturedimage_{sampleid}_{date}.jpg'
-    full_path = os.path.join(image_path, image_filename)
-    cv2.imwrite(full_path,image_cv2)
-    input_image = cv2.imread(full_path)
-    if input_image is None:
-        results.usesummary(f"Image not found or unreadable at: {full_path}")
-        raise FileNotFoundError(f"Image not found or unreadable: {full_path}")
-        
-    return input_image
-
+    
+    max_attempt = 3
+    for attempt in range(1, max_attempt +1):
+        picam2= None
+        should_retry = False
+        try:
+            results.usesummary("Starting camera capture...")
+            light.on() #Turn on LED and
+            picam2 = Picamera2()
+            
+            # Configure the camera for a still capture
+            config = picam2.create_preview_configuration(main={"size":(3280,2464),"format": "YUV420"},lores={"size":(650,480),"format": "YUV420"},display= "lores" ) #(3280,2464)640,480
+            picam2.configure(config)        #  start the camera to apply settings
+            picam2.start()
+            time.sleep(2)
+#             while True:
+#                 yuv420 = picam2.capture_array("main")
+#                 rbg = cv2.cvtColor(yuv420,cv2.COLOR_YUV420p2RGB)
+#                 cv2.imwrite(full_path+"YUV",rbg)
+            picam2.stop_preview()
+            picam2.start_preview(Preview.QTGL)
+    #         picam2.start()
+            time.sleep(2)
+            picam2.capture_file(full_path)
+#             yuv420 = cv2.imread(full_path)
+#             rbg = cv2.cvtColor(yuv420,cv2.COLOR_YUV420p2RGB)
+#             cv2.imshow("camera",rgb)
+#             cv2.imwrite(full_path+"YUV",rbg)
+            if os.path.exists(full_path) and os.path.getsize(full_path) > 1024:
+                image_pil = Image.open(full_path)
+                image_rs = image_pil.resize((800,480),Image.Resampling.LANCZOS)
+                numpy_img = np.array(image_rs)
+                image_cv2 = cv2.cvtColor(numpy_img,cv2.COLOR_RGB2BGR)
+                image_filename = f'capturedimage_{sampleid}_{date}.jpg'
+                full_path = os.path.join(image_path, image_filename)
+                cv2.imwrite(full_path,image_cv2)
+                input_image = cv2.imread(full_path)
+                light.off()
+                light.close()
+                results.usesummary(f"Image saved to: {full_path}")
+                print(attempt, "line80")
+                return input_image
+            else:
+                results.usesummary(f"Attempt {attempt}: Catured file was empty/missing")
+                should_retry = True
+        except OSError as e:
+            if e.errno ==12 or "allocate" in str(e).lower():
+                results.usesummary(f"Memory Error (OSError) on attempt {attempt}: {e}")
+                print(attempt, "line88")
+                should_retry = True
+            else:
+                 results.usesummary(f"Hardware/OS Error on attempt {attempt}: {e}")
+                 print(attempt, "line91")
+                 should_retry = False
+        except Exception as e:
+            err_msg = str(e).lower()
+            if any(k in err_msg for k in ["memory","allocate","dma","buffer","resources"]):
+                 results.usesummary(f"Buffer allocation error on attempt {attempt}: {e}")
+                 print(attempt, "line86")
+                 should_retry = True
+            else:
+                 results.usesummary(f"Unexpected Error on attempt {attempt}: {e}")
+                 should_retry = False
+                 print(attempt, "line86")
+        finally:
+            if picam2:
+                try:
+                    if picam2.started:
+                        picam2.stop()
+                    picam2.close()
+                    light.close()
+                    
+                except:
+                    pass
+        if not should_retry:
+            results.usesummary("Stopping retries due to fatal error or sucess.")
+            print(attempt, "line114")
+            break
+        if attempt < max_attempt:
+            results.usesummary("retrying...")
+            time.sleep(1)
+        if light:
+            light.close()
+    results.usesummary("All capture attempts failed.")
+    return None
+            
+# def camcapture(sampleid, date, gpio_pin_board):
+#     # Mapping from BOARD to BCM numbering for the specified pins
+#     BOARD_TO_BCM = {40: 21, 29: 5}
+#     if gpio_pin_board not in BOARD_TO_BCM:
+#         print(f"Unsupported BOARD pin: {gpio_pin_board}. Use 29 or 40.")
+#     bcm_pin = BOARD_TO_BCM[gpio_pin_board]
+# 
+#     image_folder = 'captured'
+#     
+#     # Initialize hardware objects
+#     picam2 = Picamera2()
+#     light = LED(bcm_pin)
+# 
+#     # Construct the image path
+#     image_path = os.path.join(deviceinfo.path, image_folder)
+#     os.makedirs(image_path, exist_ok=True)
+#     image_filename = f'capturedimage_pil_{sampleid}_{date}.jpg'
+#     full_path = os.path.join(image_path, image_filename)
+# 
+#     try:
+#         results.usesummary("Starting camera capture...")
+#         light.on() #Turn on LED and
+#         
+#         # Configure the camera for a still capture
+#         config = picam2.create_preview_configuration(main={"size":(3280,2464)},lores={"size":(3280,2464)})
+#         picam2.configure(config)      
+#         picam2.start_preview(Preview.QT)
+#         picam2.start()
+#         time.sleep(2)
+#         picam2.capture_file(full_path)
+#         
+#         results.usesummary(f"Image saved to: {full_path}")
+# 
+#     except Exception as e:
+#         traceback.print_exc()
+#         results.usesummary(f"Error during camera operation: {e}")  
+# 
+#     finally:
+#         if picam2.started:
+#             picam2.stop()
+#         picam2.close()
+#         light.close()
+# 
+#     image_pil = Image.open(full_path)
+#     image_rs = image_pil.resize((800,480),Image.Resampling.LANCZOS)
+#     numpy_img = np.array(image_rs)
+#     image_cv2 = cv2.cvtColor(numpy_img,cv2.COLOR_RGB2BGR)
+#     image_filename = f'capturedimage_{sampleid}_{date}.jpg'
+#     full_path = os.path.join(image_path, image_filename)
+#     cv2.imwrite(full_path,image_cv2)
+#     input_image = cv2.imread(full_path)
+#     if input_image is None:
+#         results.usesummary(f"Image not found or unreadable at: {full_path}")
+#         widgets.error("80 Error in croping the roi")
+# #         raise FileNotFoundError(f"Image not found or unreadable: {full_path}")
+#         
+#     return input_image
+# 
 #---------------------------------------------------picam----------------------------------------------------------------
 # def camcapture_picam(sampleid, date, gpio_no):
 #     preview_time=3
@@ -120,11 +223,11 @@ def camcapture(sampleid, date, gpio_pin_board):
 #---------------------------------------------------picam----------------------------------------------------------------
  
 def find_lfa(image, sampleid, date):
-    if image is None:
-        results.usesummary("Invalid image input: image is None")
-        raise ValueError("Invalid image input")
-
+    roi = None
     try:
+        if image is None:
+            results.usesummary("Invalid image input: image is None")
+#         raise ValueError("Invalid image input")
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (9, 9), 0)
         _, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -141,26 +244,26 @@ def find_lfa(image, sampleid, date):
         
         if not contours:
             results.usesummary("No contours found in image.")
-            return None
+#             return None
 
         cassette_contour = max(contours, key=cv2.contourArea, default=None)
 
         if cassette_contour is None:
             results.usesummary("No valid cassette contour detected.")
-            return None
+#             return None
 
         perimeter = cv2.arcLength(cassette_contour, True)
         # print(perimeter)
         if not (1000 <= perimeter <= 3000): #changed upper limit to 3000(it was 2000) for meril
             results.usesummary(f"Cassette contour perimeter {perimeter} not in expected range (1000–2000).")
-            return None
+#             return None
 
         x, y, w, h = cv2.boundingRect(cassette_contour)
         aspect_ratio = round(float(w) / h, 2)
         # print("aspect_ratio",aspect_ratio)
         if not (0.5 <= aspect_ratio <= 0.85):
             results.usesummary(f"Aspect ratio {aspect_ratio} not in expected range (0.6–0.85).")
-            return None
+#             return None
 
         roi = image[y:y + h, x:x + w]
         save_dir = os.path.join(deviceinfo.path, 'captured')
@@ -168,12 +271,12 @@ def find_lfa(image, sampleid, date):
         save_path = os.path.join(save_dir, f'test_cassette_{sampleid}_{date}.jpg')
         cv2.imwrite(save_path, roi)
         results.usesummary(f"ROI successfully saved: {save_path}")
-        return roi
+#         return roi
     except Exception as e:
         traceback.print_exc()
-        # widgets.error(str(e))
+        widgets.error(str(e))
         results.usesummary(f"Error in find_lfa: {str(e)}")
-        return None
+    return roi
 
 def find_testwindow(img, sampleid, date):
     roi_image = None
@@ -253,7 +356,8 @@ def process_doa_image(total_tests,image, sampleid, date):
     test_crops = None
     try:
         if image is None:
-            raise ValueError("Invalid image input: image is None")
+            results.usesummary("Invalid Image input")
+#             raise ValueError("Invalid image input: image is None")
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (11, 11), 0)
         _, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -264,7 +368,8 @@ def process_doa_image(total_tests,image, sampleid, date):
         cv2.drawContours(image1,contours,-1,(0,255,0),2)
         cv2.imwrite(deviceinfo.path+'/captured/test_cassate_cnt.jpg',image1)
         if not contours:
-            raise ValueError("No contours found for cassette detection")
+            ""
+#             raise ValueError("No contours found for cassette detection")
         cassette_contour = max(contours, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(cassette_contour)
         print("cassette_image",x,y,w,h, len(cassette_contour))
@@ -280,7 +385,7 @@ def process_doa_image(total_tests,image, sampleid, date):
             results.usesummary(f"Warning: Failed to save cassette image: {str(save_err)}")
         x,y,_ = cassette_image.shape
         bottom_height = 650
-        test_window = cassette_image[x-bottom_height:x,50:-30] #hinged from the bottom for consistent cropping changed from x-20,70:-60
+        test_window = cassette_image[x-bottom_height:x-20,70:-60] #hinged from the bottom for consistent cropping
         c_gray = cv2.cvtColor(test_window, cv2.COLOR_BGR2GRAY)
         c_blurred = cv2.GaussianBlur(c_gray, (7, 7), 0)
         sobelx = cv2.Sobel(c_blurred,cv2.CV_64F,1,0,ksize=5)
@@ -319,7 +424,7 @@ def process_doa_image(total_tests,image, sampleid, date):
         save_path = os.path.join(save_dir, f'{sampleid}_{date}_rect.jpg')
         cv2.imwrite(save_path, image_rect)
         if len(test_rects) != total_tests: 
-            err_msg = f"Expected {total_tests} test windows but found {len(test_rects)}. Re-insert test card at center and try again."
+            err_msg = f"Expected {total_tests} test windows but found {len(test_rects)}. Re-insert test card properly and try again."
             results.usesummary(err_msg)
             widgets.error(err_msg)
         else:
@@ -347,7 +452,8 @@ def roi_segment(captured_image, sampleid, date):
             if test_window is not None:
                 roi_seg = test_window
             else:
-                widgets.error("Re-insert the test cassette and try again")
+                ""
+#                 widgets.error("Re-insert the test cassette and try again")
         else:
             widgets.error("Test cassette not detected.")
     except Exception as e:
@@ -581,11 +687,14 @@ def read_test(data_array, overwrite):
             test_keys = list(total_tests.keys())
             test_crops = process_doa_image(len(total_tests), captured_image, sample_id, date)
             if test_crops is None:
-                raise ValueError("Failed to extract test strips from cassette")
+                widgets.error("Failed to extract test strips from cassette")
+#                 raise ValueError("Failed to extract test strips from cassette")
             if total_tests is None:
-                raise ValueError(f"DOA Panel is not defined in the 'Drug_of_Abuse' dictionary in info.py.")
-            if len(total_tests) != len(test_crops):
-                raise ValueError(f"Expected {len(total_tests)} test windows, but got {len(test_crops)}")
+                widgtes.error(f"DOA Panel is not defined in the 'Drug_of_Abuse' dictionary in info.py.")
+#                 raise ValueError(f"DOA Panel is not defined in the 'Drug_of_Abuse' dictionary in info.py.")
+            elif len(total_tests) != len(test_crops):
+                widgets.error(f"Expected {len(total_tests)} test windows, but got {len(test_crops)}")
+#                 raise ValueError(f"Expected {len(total_tests)} test windows, but got {len(test_crops)}")
             panel_results = {}
             
             for i,test_crop in enumerate(test_crops):
@@ -616,7 +725,7 @@ def read_test(data_array, overwrite):
             val = val_qualitative(peaks, prominences, bg_flag, analyte, sample_id, date, ordered_marker_array)
     except Exception as e:
         traceback.print_exc()
-        widgets.error("Error occurred while reading the test.")
+#         widgets.error("Error occurred while reading the test.")
         results.usesummary(e)
     try:
         if "back" in data_array[1].lower():
@@ -647,4 +756,95 @@ def read_test(data_array, overwrite):
         traceback.print_exc()
         # widgets.error("Could not add result to database.")
 #--------------------------------------------------------------------------
+def addparaqr():
+    try:
+        image = camcapture('qr', '', 40)
+        detect = decode(image)
+        qr_data = ''.join([obj.data.decode('utf-8') for obj in detect])
+        if not qr_data:
+            ""
+#             widgets.error("No QR code detected.")
+        results.usesummary("QR code scanned and decoded for: " + qr_data)
+        analyte, calid, caldate, expdate, unit, batchid, measl, measu = qr_data.split(';')
+        widgets.error("QR code content is invalid or improperly formatted.")
+        if analyte == "HBA":
+            analyte = "HbA1C"
+        analytedb = TinyDB(deviceinfo.path + 'analytes.json')
+        Sample = Query()
+
+        if analytedb.search(Sample.batchid == batchid):
+            widgets.error(f"Analyte '{analyte}' with batch ID '{batchid}' already exists.")
+        else:
+            utils.updatepara(analyte, calid, caldate, expdate, batchid, measl, measu, unit)
+            results.usesummary(f"Calibration for '{analyte}' with batch ID '{batchid}' read from QR scan.")
+    except Exception as e:
+        print(e)
+        widgets.error("Unexpected error occurred while adding analyte from QR.")
+
+def calfit(conc_array, result_array, calid):
+    try:
+        details_cal = calid.split("/")
+        p_factor = int(details_cal[0])
+
+        cal_res = []
+
+        if p_factor == 1:  # Linear
+            const1 = float(details_cal[1]) / 100
+            const2 = float(details_cal[2]) / 100
+            cal_res = [const1 * float(c) + const2 for c in conc_array]
+
+        elif p_factor == 2:  # Log-linear
+            const1 = float(details_cal[1]) / 100
+            const2 = float(details_cal[2]) / 100
+            cal_res = [const1 * np.log(float(c)) + const2 for c in conc_array]
+
+        elif p_factor == 3:  # Power curve
+            const1 = float(details_cal[1]) / 100
+            const2 = float(details_cal[2]) / 100
+            cal_res = [pow(const1 * float(c), const2) for c in conc_array]
+
+        else:  # 4PL
+            a = float(details_cal[0]) / 100
+            b = float(details_cal[1]) / 100
+            c = float(details_cal[2]) / 100
+            d = float(details_cal[3]) / 100
+            for conc in conc_array:
+                try:
+                    k = pow(float(conc) / c, b)
+                    h = (a - d) / (1 + k)
+                    y = d + h
+                    cal_res.append(y)
+                except Exception as e:
+                    print(f"Error in 4PL computation for {conc}: {e}")
+                    cal_res.append(0)
+
+        try:
+            plt.plot(conc_array, cal_res, label="Fitted Curve")
+            plt.plot(conc_array, result_array, label="Actual Data")
+            plt.legend()
+            plt.savefig(deviceinfo.path + f'qctests/calfit_{calid}.png')
+            plt.close()
+        except Exception as e:
+            widgets.error("Could not generate calibration plot.")
+            traceback.print_exc()
+            results.usesummary(e)
+
+        try:
+            corr_matrix = np.corrcoef(cal_res, result_array)
+            corr = corr_matrix[0, 1]
+            R_sq = str(round(corr ** 2, 4))
+        except Exception as e:
+            results.usesummary(e)
+            widgets.error("Could not calculate R².")
+            traceback.print_exc()
+            R_sq = 'Err'
+
+        return R_sq
+
+    except Exception as e:
+        widgets.error("Error in calibration fitting.")
+        traceback.print_exc()
+        results.usesummary(e)
+        return 'Err'
+
 #--------------------------------------------------------------------------

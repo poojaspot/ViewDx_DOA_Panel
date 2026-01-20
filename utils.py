@@ -719,9 +719,10 @@ def json_to_csv(json_path):
 def getbatchidqr():
     analyte = 0
     batchid = []
+    error_msg = None
     try:
-        try:image = imagepro.camcapture('qr', '',40)
-        except Exception as e: print(e)
+        image = imagepro.camcapture('qr', '',40)
+        error_msg = "Image not captures"
         detect = decode(image)
         string = [obj.data.decode('utf-8') for obj in detect]
         string = ''.join(string)
@@ -733,10 +734,11 @@ def getbatchidqr():
             print('analyte, calid, caldate, expdate, unit, batchid, measl, measu',analyte, calid, caldate, expdate, unit, batchid, measl, measu)
             if analyte == "HBA":
                 analyte = "HbA1C"
-        else: widgets.error("No QR code detected.")
+        else:
+            error_msg = "No QR code detected."
     except Exception as e:
         print(e)
         widgets.error("Could not add analyte")
-    return analyte, batchid
+    return analyte, batchid, error_msg
 
 

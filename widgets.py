@@ -49,9 +49,17 @@ def drawKeyboard(parent):
         else: entry.insert(position, event)
         
 def error(string):
+#     root = tk._default_root
     try:
-        messagebox.showinfo(title=None, message=string)
+        root = tk._default_root
+        if root is None:
+            root =tk.TK()
+            root.withdraw()
+        parent_msg = tk.Toplevel(root)
+        parent_msg.withdraw()
+        messagebox.showinfo(title=None, message=string,parent=parent_msg)
         results.usesummary(string)
+        parent_msg.destroy()
     except Exception as e:
         print(e)
         messagebox.showinfo(title=None, message=str(e))
@@ -60,12 +68,33 @@ def error(string):
 
 
 def askquestion(string, func, para):
-     response = messagebox.askquestion(title=None, message=string)
-     if response == "no": print('')
-     else:
-         if para =='':func()
-         else:func(para)
-         
+    root = tk._default_root
+    if root is None:
+        root =tk.TK()
+        root.withdraw()
+    parent_msg = tk.Toplevel(root)
+    parent_msg.withdraw()
+    response = messagebox.askquestion(title=None, message=string, parent=parent_msg)
+    parent_msg.destroy()
+    if response == "no": print('')
+    else:
+        if para =='':func()
+        else:func(para)
+             
 def showinfo(title, message):
-    messagebox.showinfo(title=title, message=str(message))
-    results.usesummary(f"Info:{message}")
+#     messagebox.showinfo(title=title, message=str(message))
+#     results.usesummary(f"Info:{message}")
+    try:
+        root = tk._default_root
+        if root is None:
+            root =tk.TK()
+            root.withdraw()
+        parent_msg = tk.Toplevel(root)
+        parent_msg.withdraw()
+        messagebox.showinfo(title=None, message=string,parent=parent_msg)
+        results.usesummary(string)
+        parent_msg.destroy()
+    except Exception as e:
+        print(e)
+        messagebox.showinfo(title=None, message=str(e))
+        results.usesummary(str(e))

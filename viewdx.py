@@ -417,7 +417,7 @@ def Splash():
             try:
                 ssid_list = utils.list_wifi()
                 if not ssid_list:
-                    raise ValueError("Empty list returned")
+                    widgets.error("Empty list returned")
             except Exception as e:
                 ssid_list = []
                 widgets.error(f"No networks detected: {e}")
@@ -1007,8 +1007,10 @@ def Splash():
             global batchid_qr
             batchid_qr = "Select BatchId"
             analyte_qr = None
-            analyte_qr,batchid_qr = utils.getbatchidqr()
-            if analyte_qr != data_array[1]:
+            analyte_qr,batchid_qr,err_msg = utils.getbatchidqr()
+            if err_msg:
+                widgets.error(err_msg)
+            elif analyte_qr != data_array[1]:
                 widgets.error(f"Incorrect QR code. Selected analyte: {data_array[1]}, scanned analyte: {analyte_qr}.")
             else:
                 caldrop.set(batchid_qr)
@@ -2214,5 +2216,5 @@ def Splash():
     
     splash.mainloop()  
 Splash()
- 
+
 
