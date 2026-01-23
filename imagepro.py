@@ -372,6 +372,7 @@ def process_doa_image(total_tests,image, sampleid, date):
 #             raise ValueError("No contours found for cassette detection")
         cassette_contour = max(contours, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(cassette_contour)
+        
         print("cassette_image",x,y,w,h, len(cassette_contour))
         cassette_image = image[y:y+h, x:x+w]
         try:
@@ -385,7 +386,7 @@ def process_doa_image(total_tests,image, sampleid, date):
             results.usesummary(f"Warning: Failed to save cassette image: {str(save_err)}")
         x,y,_ = cassette_image.shape
         bottom_height = 650
-        test_window = cassette_image[x-bottom_height:x-20,70:-60] #hinged from the bottom for consistent cropping
+        test_window = cassette_image[x-bottom_height:x-20,:] #hinged from the bottom for consistent cropping
         c_gray = cv2.cvtColor(test_window, cv2.COLOR_BGR2GRAY)
         c_blurred = cv2.GaussianBlur(c_gray, (7, 7), 0)
         sobelx = cv2.Sobel(c_blurred,cv2.CV_64F,1,0,ksize=5)
@@ -404,37 +405,68 @@ def process_doa_image(total_tests,image, sampleid, date):
                 cleaned_contours.append(contour)
         cv2.drawContours(test_window_cnt, cleaned_contours,-1,(0,255,0),2)
         cv2.imwrite(deviceinfo.path+'/captured/doa_contours.jpg',test_window_cnt)
-        test_rects = []
-        image_rect = test_window.copy()
+#         test_rects = []
+#         image_rect = test_window.copy()
+#         for contour in cleaned_contours:
+#             epsilon = 0.01*cv2.arcLength(contour,True)
+#             approx = cv2.approxPolyDP(contour,epsilon,True)
+#             if len(approx)>=4:
+#                 perimeter = cv2.arcLength(contour, True)
+#                 if perimeter > 300:
+#                     tx, ty, tw, th = cv2.boundingRect(contour)
+#                     aspect_ratio = tw / float(th) if th != 0 else 0
+# #                     print("perimeter",perimeter,"aspect_ratio",aspect_ratio,"th",th,"tw",tw)
+#                     if 0.1 <= aspect_ratio <= 0.98:
+#                         if th >100 and tw <=150:
+#                             test_rects.append((tx, ty, tw, th))
+#                             print("selected PR: ",perimeter,"AR: ",aspect_ratio,"th: ",th,"tw: ",tw)
+#                             print("--------------------------------------------------------------------------")
+#                             cv2.rectangle(image_rect,(tx,ty),(tx+tw,ty+th),(255,0,0),2)
+        candidate_rects =[]
         for contour in cleaned_contours:
-            epsilon = 0.01*cv2.arcLength(contour,True)
-            approx = cv2.approxPolyDP(contour,epsilon,True)
-            if len(approx)>=4:
-                perimeter = cv2.arcLength(contour, True)
-                if perimeter > 300:
-                    tx, ty, tw, th = cv2.boundingRect(contour)
-                    aspect_ratio = tw / float(th) if th != 0 else 0
-#                     print("perimeter",perimeter,"aspect_ratio",aspect_ratio,"th",th,"tw",tw)
-                    if 0.1 <= aspect_ratio <= 0.98:
-                        if th >100 and tw <=100:
-                            test_rects.append((tx, ty, tw, th))
-                            print("selected PR: ",perimeter,"AR: ",aspect_ratio,"th: ",th,"tw: ",tw)
-                            print("--------------------------------------------------------------------------")
-                            cv2.rectangle(image_rect,(tx,ty),(tx+tw,ty+th),(255,0,0),2)
-        save_path = os.path.join(save_dir, f'{sampleid}_{date}_rect.jpg')
-        cv2.imwrite(save_path, image_rect)
-        if len(test_rects) != total_tests: 
-            err_msg = f"Expected {total_tests} test windows but found {len(test_rects)}. Re-insert test card properly and try again."
+            tx,ty,tw,th = cv2.boundingRect(contour)
+            if th > (test_window.shape[0]*0.4):
+                candidate_rects.append([tx,ty,tw,th])
+            if len(candidate_rects)>0:
+                widths = sorted([r[2] for r in candidate_rects])
+                median_w = widths[len(widths)//2]
+                max_width_thresh = median_w*1.2
+                
+                final_crops = []
+                candidate_rects.sort(key=lambda r:r[0])
+                for i, (tx,ty, tw, th) in enumerate(candidate_rects):
+                    current_crop = None
+                    if tw >max_width_thresh:
+                        if i == 0:
+                            diff = tw-median_w
+                            new_tx = tx+diff
+                            current_crop = test_window[ty:ty+th, new_tx:new_tx+median_w]
+                        elif i == len(candidate_rects)-1:
+                            current_crop = test_window[ty:ty+th, tx:tx+median_w]
+                        else:
+                            center_x = tx +(tw//2)
+                            half_median = median_w//2
+                            new_tx = center_x-half_median
+                            if new_tx<tx: new_tx = tx
+                            current_crop = test_window[ty:ty+th, new_Tx:new_tx+median_w]
+                    else:
+                        current_crop = test_window[ty:ty+th, tx:tx+tw]
+                    final_crops.append(current_crop)          
+#         save_path = os.path.join(save_dir, f'{sampleid}_{date}_rect.jpg')
+#         cv2.imwrite(save_path, image_rect)
+        if len(final_crops) != total_tests: 
+            err_msg = f"Expected {total_tests} test windows but found {len(final_crops)}. Re-insert test card properly and try again."
             results.usesummary(err_msg)
             widgets.error(err_msg)
         else:
-            test_rects.sort(key=lambda r: r[0])
+#             final_crops.sort(key=lambda r: r[0])
             test_crops = []
             i = 0 
-            for tx, ty, tw, th in test_rects:
-                test_crops.append(test_window[ty:ty + th, tx:tx + tw])
+            for c in final_crops:
+#                 test_crops.append(test_window[ty:ty + th, tx:tx + tw])
+                test_crops.append(c)
                 save_path = os.path.join(save_dir, f'test_{i}.jpg')
-                cv2.imwrite(save_path, test_window[ty:ty + th, tx:tx + tw])
+                cv2.imwrite(save_path, c)
                 i+=1
     except Exception as e:
         traceback.print_exc()
@@ -468,7 +500,7 @@ def get_prominences(result_array, sampleid, date):
         # Preprocess and baseline correction
         print('len',len(result_array), len(result_array))
         inverted_data = 0 - result_array  # invert signal
-        baseline = baseline_correction(inverted_data, 1500, 0.001) #changed 2000, 0.005 to 1500,0.001
+        baseline = baseline_correction(inverted_data, 2000, 0.005) #changed 2000, 0.005 to 1500,0.001
         corrected_data = inverted_data - baseline        
         pr_val = int(deviceinfo.peak_threshold)
         peaks, properties = find_peaks(corrected_data,height=0, prominence=pr_val, width=(4,20),rel_height=0.30)
@@ -688,7 +720,6 @@ def read_test(data_array, overwrite):
             test_crops = process_doa_image(len(total_tests), captured_image, sample_id, date)
             if test_crops is None:
                 widgets.error("Failed to extract test strips from cassette")
-#                 raise ValueError("Failed to extract test strips from cassette")
             if total_tests is None:
                 widgtes.error(f"DOA Panel is not defined in the 'Drug_of_Abuse' dictionary in info.py.")
 #                 raise ValueError(f"DOA Panel is not defined in the 'Drug_of_Abuse' dictionary in info.py.")
@@ -703,7 +734,7 @@ def read_test(data_array, overwrite):
                 current_markers = total_tests[current_ti]
                 bg_flag = check_bg(test_crop, sample_id, date)
                 result_array = scan_card(test_crop)
-                peaks, prominences = get_prominences(result_array[10:-15], test_strip_id, date)
+                peaks, prominences = get_prominences(result_array[5:-15], test_strip_id, date)
                 
                 result_for_strip  = val_qualitative_competitive(peaks, prominences, bg_flag, analyte, test_strip_id, date, current_markers) 
                 for marker in current_markers:

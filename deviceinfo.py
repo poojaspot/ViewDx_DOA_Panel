@@ -24,5 +24,5 @@ path = '/home/pi/viewdx/'
 drychem = ['AST', 'ALT', 'Hb', 'Billirubin']
 threelineDict = ['Vit-D']
 raw_value = "ratio"
-peak_threshold = 5
+peak_threshold = 10
 qualitative_dict = {'HIV': ['HIV-1', 'HIV-2'],'Malaria': ['Pf HRP-II Ag']}

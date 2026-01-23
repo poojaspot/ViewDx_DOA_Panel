@@ -146,8 +146,11 @@ def Splash():
         shutdown.add_command(label='Shutdown', font=screen_config.menufont, command=lambda: exitprocess.poweroff())
         shutdown.add_command(label='Restart', font=screen_config.menufont, command=lambda: exitprocess.restart())
         shutdown.add_command(label='Exit Application', font=screen_config.menufont,
-                             command=lambda: exitapp(splash.destroy, "exit application"))
+                             command=lambda: exitapp(clean_exit, "exit application"))
         parent.config(menu=menubar)
+        def clean_exit():
+            splash.destroy()
+            os._exit(0)
 
     def DeviceInfo():
         global devinfo
