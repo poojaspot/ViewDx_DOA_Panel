@@ -30,7 +30,7 @@ rsync -av --update \
   --exclude 'lab_logo.png' \
   --exclude 'logo.png' \
   --exclude 'splash.png' \
-  ----exclude 'splash_logo.png' \
+  --exclude 'splash_logo.png' \
   "$TMP_DIR"/ "$RUNTIME_DIR"/
 
 rm -rf "$TMP_DIR"
