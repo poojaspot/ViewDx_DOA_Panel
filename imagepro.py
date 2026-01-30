@@ -503,7 +503,7 @@ def get_prominences(result_array, sampleid, date):
         baseline = baseline_correction(inverted_data, 2000, 0.005) #changed 2000, 0.005 to 1500,0.001
         corrected_data = inverted_data - baseline        
         pr_val = int(deviceinfo.peak_threshold)
-        peaks, properties = find_peaks(corrected_data,height=0, prominence=pr_val, width=(4,20),rel_height=0.30)
+        peaks, properties = find_peaks(corrected_data,height=0, prominence=pr_val, width=(4,20),rel_height=0.30,distance=25)
         prominences = peak_prominences(corrected_data, peaks)[0]
         results.usesummary(f"Detected prominences: {prominences}")
 

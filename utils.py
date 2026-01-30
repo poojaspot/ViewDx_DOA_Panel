@@ -20,6 +20,10 @@ import imagepro
 import re
 import traceback
 
+NMCLI_ENV= os.environ.copy()
+NMCLI_ENV["$DBUS_SESSION_BUS_ADDRESS"] = f"unix:path=/run/user/1000/bus"
+NMCLI_ENV["XDG_RUNTIME_DIR"]="/run/user/1000"
+
 
 def get_pendrive():
     try:
@@ -516,50 +520,71 @@ def ping(ssid):
 def togglewifi(state):
     try:
         if state == "Enabled":
-            subprocess.run(["rfkill", "unblock", "wifi"], check=True)  # unblock wifi to enable
+            subprocess.run(["nmcli", "radio", "wifi", "on"], check=True, env=NMCLI_ENV)  # unblock wifi to enable
             print('wifi unblocked (enabled)')
         elif state == "Disabled":
-            subprocess.run(["rfkill", "block", "wifi"], check=True)  # block wifi to disable
+            subprocess.run(["nmcli", "radio", "wifi","off"], check=True,env=NMCLI_ENV)  # block wifi to disable
             print('wifi blocked (disabled)')
         else:
             widgets.error("Invalid wifi state. Use 'Enabled' or 'Disabled'.")
     except Exception as e:
+        traceback.print_exc()
         widgets.error(f"Error toggling wifi: {e}")
 
 def list_wifi():
+    
     try:
-        s = subprocess.run(["rfkill", "list", "wifi"], capture_output=True, text=True, check=True).stdout
-        if "Soft blocked: yes" in s:
-            subprocess.run(["rfkill", "unblock", "wifi"], check=True)
-
+        subprocess.run(["nmcli", "radio", "wifi", "on"], check=True, env=NMCLI_ENV)
         time.sleep(1)
-        command = "sudo iwlist wlan0 scan | grep ESSID"
-        process = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
-        output = process.stdout
+#         s = subprocess.run(["rfkill", "list", "wifi"], capture_output=True, text=True, check=True).stdout
+#         if "Soft blocked: yes" in s:
+#             subprocess.run(["rfkill", "unblock", "wifi"], check=True)
 
-        wifi_list = [line.strip().replace('ESSID:', '').replace('"', '') for line in output.splitlines()]
-        return wifi_list
-
+        
+        command = ["nmcli", "-t","-f", "SSID,SIGNAL","dev","wifi","list"]
+        result = subprocess.run(command,capture_output=True, text=True, env=NMCLI_ENV)
+        output = result.stdout
+        print(output)
+        print("------------------------------------------")
+        wifi_list = []
+        seen_ssids = set()
+        for line in result.stdout.splitlines():
+            parts = line.split(':')
+#             print(parts)
+            if len(parts)>=1:
+                ssid = parts[0]
+                if ssid and ssid not in seen_ssids:
+                    wifi_list.append(ssid)
+#                     print(wifi_list)
+                    seen_ssids.add(ssid)
+        
     except subprocess.CalledProcessError as e:
+        traceback.print_exc()
         widgets.error("Failed to scan wifi networks.")
         print(e)
-        return []
+    return wifi_list
 
 def connect_wifi(ssid,password):
     try:
-        subprocess.run(["sudo","rfkill","unblock","wifi"],check=True)
-        time.sleep(2)
-        command =["sudo", "nmcli","device","wifi","connect",ssid,"password",password]
-        result = subprocess.run(command,capture_output=True,text=True,check=False)
+        subprocess.run(["sudo","nmcli","radio","wifi","on"],check=True, env=NMCLI_ENV)
+        time.sleep(1)
+        subprocess.run(["nmcli","con","delete",ssid],capture_output =True,check=False,env=NMCLI_ENV)
+        command =[ "nmcli","device","wifi","connect",ssid,"password",password]
+        result = subprocess.run(command,capture_output=True,text=True,check=False, env=NMCLI_ENV)
         if result.returncode==0:
+            ping(ssid)
             print(f"successfully connected to {ssid}")
         else:
             print(result.stder)
     except FileNotFoundError:
+        traceback.print_exc()
         print("nmcli, rfcommand not found")
+        
     except subprocess.CalledProcessError as e:
+        traceback.print_exc()
         print(f"error occured whillle running: {e}")
-    except exception as e:
+    except Exception as e:
+        traceback.print_exc()
         print(e)
 
 def update_wifi(ssidE, wpassE):
@@ -573,25 +598,26 @@ def update_wifi(ssidE, wpassE):
             widgets.error("Please add both SSID and password")
         else:
             connect_wifi(ssid, password)
-            time.sleep(5)
+            time.sleep(2)
     except Exception as e:
+        traceback.print_exc()
         widgets.error(f"Could not connect wifi: {e}")
         results.usesummary(str(e))
 
 def get_ip_add():
     try:
-        output = subprocess.run(['ifconfig', 'wlan0'], stdout=subprocess.PIPE, text=True, check=True).stdout
-        for line in output.split('\n'):
-            if 'inet ' in line and 'inet6' not in line:
-                ip_address = line.strip().split()[1]
-                if ip_address != '127.0.0.1':
-                    widgets.error(f"IP Address: {ip_address}")
-                    return ip_address
-        widgets.error("No valid IP address found.")
-        return None
+        ip = None
+        result = subprocess.run(['hostname', '-I'], stdout=subprocess.PIPE, text=True, check=True).stdout
+        ip_addresses = result.stdout.strip().split()
+        if ip_addresses:
+            ip = ip_addresses[0]
+            widgets.error(f"IP Address: {ip_address}")
+        else:
+            widgets.error("No valid IP address found.")
     except Exception as e:
+        traceback.print_exc()
         widgets.error(f"Error getting IP address: {e}")
-        return None
+    return ip
 
 def checkcaldate(date_str: str) -> bool:
     try:
@@ -617,6 +643,7 @@ def checkcaldate(date_str: str) -> bool:
             widgets.error("Calibration date is invalid")
             return False
     except Exception as e:
+        traceback.print_exc()
         widgets.error(f"Error checking calibration date: {e}")
         return False
 
@@ -639,6 +666,7 @@ def checkcalid(calid_str: str) -> bool:
             else:
                 return False
     except Exception as e:
+        traceback.print_exc()
         results.usesummary(str(e))
         widgets.error("Calid string format is incorrect")
         return False
