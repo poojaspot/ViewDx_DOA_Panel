@@ -448,7 +448,7 @@ def process_doa_image(total_tests,image, sampleid, date):
                             half_median = median_w//2
                             new_tx = center_x-half_median
                             if new_tx<tx: new_tx = tx
-                            current_crop = test_window[ty:ty+th, new_Tx:new_tx+median_w]
+                            current_crop = test_window[ty:ty+th, new_tx:new_tx+median_w]
                     else:
                         current_crop = test_window[ty:ty+th, tx:tx+tw]
                     final_crops.append(current_crop)          
